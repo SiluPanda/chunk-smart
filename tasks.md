@@ -6,15 +6,15 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ## Phase 0: Project Scaffolding & Configuration
 
-- [ ] **Install dev dependencies** — Add `typescript`, `vitest`, `eslint`, and `@types/node` as devDependencies in `package.json`. Run `npm install` to generate `node_modules` and `package-lock.json`. | Status: not_done
+- [x] **Install dev dependencies** — Add `typescript`, `vitest`, `eslint`, and `@types/node` as devDependencies in `package.json`. Run `npm install` to generate `node_modules` and `package-lock.json`. | Status: done
 
 - [ ] **Add CLI bin entry to package.json** — Add `"bin": { "chunk-smart": "dist/cli.js" }` to `package.json` so the CLI is available after global install or via `npx`. | Status: not_done
 
-- [ ] **Configure ESLint** — Create `.eslintrc.cjs` (or `eslint.config.js`) with TypeScript support. Ensure `npm run lint` works against `src/`. | Status: not_done
+- [x] **Configure ESLint** — Create `.eslintrc.cjs` (or `eslint.config.js`) with TypeScript support. Ensure `npm run lint` works against `src/`. | Status: done
 
 - [ ] **Create directory structure** — Create all directories specified in the file structure: `src/strategies/`, `src/boundaries/`, `src/atomic/`, `src/__tests__/`, `src/__tests__/atomic/`, `src/__tests__/fixtures/markdown/`, `src/__tests__/fixtures/code/`, `src/__tests__/fixtures/html/`, `src/__tests__/fixtures/json/`, `src/__tests__/fixtures/mixed/`. | Status: not_done
 
-- [ ] **Configure Vitest** — Ensure vitest is properly configured (either via `vitest.config.ts` or the existing `package.json` script `"test": "vitest run"`). Verify `npm run test` runs successfully with zero tests. | Status: not_done
+- [x] **Configure Vitest** — Ensure vitest is properly configured (either via `vitest.config.ts` or the existing `package.json` script `"test": "vitest run"`). Verify `npm run test` runs successfully with zero tests. | Status: done
 
 ---
 
@@ -22,11 +22,11 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ### 1.1 Type Definitions
 
-- [ ] **Define ContentType union type** — In `src/types.ts`, define `type ContentType = 'markdown' | 'code' | 'html' | 'json' | 'yaml' | 'text'`. | Status: not_done
+- [x] **Define ContentType union type** — In `src/types.ts`, define `type ContentType = 'markdown' | 'code' | 'html' | 'json' | 'yaml' | 'text'`. | Status: done
 
 - [ ] **Define SizeUnit union type** — In `src/types.ts`, define `type SizeUnit = 'tokens' | 'characters'`. | Status: not_done
 
-- [ ] **Define Chunk interface** — In `src/types.ts`, define the `Chunk` interface with `content: string` and `metadata: ChunkMetadata`. | Status: not_done
+- [x] **Define Chunk interface** — In `src/types.ts`, define the `Chunk` interface with `content: string` and `metadata: ChunkMetadata`. | Status: done
 
 - [ ] **Define ChunkMetadata interface** — In `src/types.ts`, define `ChunkMetadata` with all fields: `index`, `startOffset`, `endOffset`, `tokenCount`, `charCount`, `contentType`, `headings`, `codeLanguage?`, `overlapBefore`, `overlapAfter`, `forceSplit`, `tableRowRange?`, `jsonPaths?`, `custom?`. | Status: not_done
 
@@ -40,17 +40,17 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 - [ ] **Define JSONChunkOptions interface** — In `src/types.ts`, extend `ChunkOptions` with `compact?`. | Status: not_done
 
-- [ ] **Define DetectResult interface** — In `src/types.ts`, define `DetectResult` with `type: ContentType` and `confidence: number`. | Status: not_done
+- [x] **Define DetectResult interface** — In `src/types.ts`, define `DetectResult` with `type: ContentType` and `confidence: number`. | Status: done
 
 - [ ] **Define Chunker interface** — In `src/types.ts`, define the `Chunker` interface returned by `createChunker()` with methods: `chunk()`, `chunkMarkdown()`, `chunkCode()`, `chunkHTML()`, `chunkJSON()`, `detectContentType()`. | Status: not_done
 
 ### 1.2 Size Measurement
 
-- [ ] **Implement default token counter** — In `src/size.ts`, implement the default approximate token counter: `(text: string) => Math.ceil(text.length / 4)`. | Status: not_done
+- [x] **Implement default token counter** — In `src/size.ts`, implement the default approximate token counter: `(text: string) => Math.ceil(text.length / 4)`. | Status: done
 
 - [ ] **Implement measureSize function** — In `src/size.ts`, implement a function that measures text size in either tokens or characters based on the `sizeUnit` option, using the configured `tokenCounter` for token mode and `text.length` for character mode. | Status: not_done
 
-- [ ] **Implement resolveDefaults function** — In `src/size.ts` (or a dedicated `defaults.ts`), implement a function that merges user-provided options with built-in defaults (`maxChunkSize: 512`, `minChunkSize: 50`, `targetChunkSize: maxChunkSize`, `overlap: 0`, `sizeUnit: 'tokens'`, etc.). | Status: not_done
+- [x] **Implement resolveDefaults function** — In `src/size.ts` (or a dedicated `defaults.ts`), implement a function that merges user-provided options with built-in defaults (`maxChunkSize: 512`, `minChunkSize: 50`, `targetChunkSize: maxChunkSize`, `overlap: 0`, `sizeUnit: 'tokens'`, etc.). | Status: done
 
 - [ ] **Write size measurement tests** — In `src/__tests__/size.test.ts`, test default token counter accuracy, custom token counter integration, character mode measurement, and edge cases (empty string, single character, Unicode text). | Status: not_done
 
@@ -70,11 +70,11 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ### 1.4 Plain Text Recursive Splitting Strategy
 
-- [ ] **Implement recursive text splitter** — In `src/strategies/text.ts`, implement the recursive splitting algorithm: try double newlines first, then single newlines, then sentence endings, then spaces, then character-level split. Each level checks if segments fit within `maxChunkSize`; if not, recursively apply the next finer separator. | Status: not_done
+- [x] **Implement recursive text splitter** — In `src/strategies/text.ts`, implement the recursive splitting algorithm: try double newlines first, then single newlines, then sentence endings, then spaces, then character-level split. Each level checks if segments fit within `maxChunkSize`; if not, recursively apply the next finer separator. | Status: done
 
 - [ ] **Implement target size optimization** — Within the recursive splitter, when multiple split points are available, prefer the split that produces chunks closest to `targetChunkSize`. | Status: not_done
 
-- [ ] **Write plain text strategy tests** — Test with prose paragraphs, single long paragraphs with no structure, documents with only newlines, pathological input (one very long word exceeding `maxChunkSize`). Verify all chunks respect `maxChunkSize`. | Status: not_done
+- [x] **Write plain text strategy tests** — Test with prose paragraphs, single long paragraphs with no structure, documents with only newlines, pathological input (one very long word exceeding `maxChunkSize`). Verify all chunks respect `maxChunkSize`. | Status: done
 
 ### 1.5 Small Chunk Merging
 
@@ -88,39 +88,39 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ### 1.6 Metadata Construction
 
-- [ ] **Implement metadata builder** — In `src/metadata.ts`, implement a function that constructs `ChunkMetadata` objects: assign sequential `index`, compute `startOffset` and `endOffset` from the original text, compute `tokenCount` and `charCount`, set `contentType`, set `headings` (empty array for now), set `overlapBefore: 0` and `overlapAfter: 0` (overlap applied later), set `forceSplit: false`, and attach `custom` metadata from options. | Status: not_done
+- [x] **Implement metadata builder** — In `src/metadata.ts`, implement a function that constructs `ChunkMetadata` objects: assign sequential `index`, compute `startOffset` and `endOffset` from the original text, compute `tokenCount` and `charCount`, set `contentType`, set `headings` (empty array for now), set `overlapBefore: 0` and `overlapAfter: 0` (overlap applied later), set `forceSplit: false`, and attach `custom` metadata from options. | Status: done
 
-- [ ] **Write metadata tests** — In `src/__tests__/metadata.test.ts`, verify correct index assignment, offset calculation, token/char count accuracy, content type passthrough, and custom metadata attachment. | Status: not_done
+- [x] **Write metadata tests** — In `src/__tests__/metadata.test.ts`, verify correct index assignment, offset calculation, token/char count accuracy, content type passthrough, and custom metadata attachment. | Status: done
 
 ### 1.7 Content Type Detection
 
-- [ ] **Implement markdown detection heuristics** — In `src/detect.ts`, implement markdown confidence scoring based on: ATX headers (+0.3 per occurrence, max 0.6), fenced code blocks (+0.3), pipe tables (+0.3), markdown links (+0.1, max 0.3), emphasis/bold (+0.1, max 0.2), unordered lists (+0.1, max 0.2), blockquotes (+0.1, max 0.2), frontmatter delimiters (+0.2), horizontal rules (+0.1). | Status: not_done
+- [x] **Implement markdown detection heuristics** — In `src/detect.ts`, implement markdown confidence scoring based on: ATX headers (+0.3 per occurrence, max 0.6), fenced code blocks (+0.3), pipe tables (+0.3), markdown links (+0.1, max 0.3), emphasis/bold (+0.1, max 0.2), unordered lists (+0.1, max 0.2), blockquotes (+0.1, max 0.2), frontmatter delimiters (+0.2), horizontal rules (+0.1). | Status: done
 
-- [ ] **Implement HTML detection heuristics** — In `src/detect.ts`, implement HTML confidence scoring: DOCTYPE (+0.5), HTML/HEAD/BODY tags (+0.4), block-level tags (+0.2 per unique tag, max 0.6), closing tags (+0.1, max 0.3), self-closing tags (+0.1), HTML attributes (+0.1, max 0.2). | Status: not_done
+- [x] **Implement HTML detection heuristics** — In `src/detect.ts`, implement HTML confidence scoring: DOCTYPE (+0.5), HTML/HEAD/BODY tags (+0.4), block-level tags (+0.2 per unique tag, max 0.6), closing tags (+0.1, max 0.3), self-closing tags (+0.1), HTML attributes (+0.1, max 0.2). | Status: done
 
-- [ ] **Implement JSON detection heuristics** — In `src/detect.ts`, implement JSON confidence scoring: starts with `{` or `[` (+0.4), valid JSON.parse (+0.6), key-value patterns (+0.2, max 0.4), nested braces/brackets (+0.1). | Status: not_done
+- [x] **Implement JSON detection heuristics** — In `src/detect.ts`, implement JSON confidence scoring: starts with `{` or `[` (+0.4), valid JSON.parse (+0.6), key-value patterns (+0.2, max 0.4), nested braces/brackets (+0.1). | Status: done
 
-- [ ] **Implement YAML detection heuristics** — In `src/detect.ts`, implement YAML confidence scoring: YAML document start `---` (+0.4), key-value pairs (+0.2, max 0.4), YAML-specific types (+0.2), indentation-based nesting (+0.1), no markdown headers (+0.1). Handle false positives from markdown frontmatter. | Status: not_done
+- [x] **Implement YAML detection heuristics** — In `src/detect.ts`, implement YAML confidence scoring: YAML document start `---` (+0.4), key-value pairs (+0.2, max 0.4), YAML-specific types (+0.2), indentation-based nesting (+0.1), no markdown headers (+0.1). Handle false positives from markdown frontmatter. | Status: done
 
-- [ ] **Implement code detection heuristics** — In `src/detect.ts`, implement code confidence scoring: function declarations (+0.3, max 0.6), class declarations (+0.3), import/require statements (+0.2, max 0.4), variable declarations (+0.1, max 0.2), curly brace blocks (+0.1), semicolons at line endings (+0.1, max 0.2), comment patterns (+0.1, max 0.2), shebang line (+0.3). | Status: not_done
+- [x] **Implement code detection heuristics** — In `src/detect.ts`, implement code confidence scoring: function declarations (+0.3, max 0.6), class declarations (+0.3), import/require statements (+0.2, max 0.4), variable declarations (+0.1, max 0.2), curly brace blocks (+0.1), semicolons at line endings (+0.1, max 0.2), comment patterns (+0.1, max 0.2), shebang line (+0.3). | Status: done
 
-- [ ] **Implement plain text fallback** — In `src/detect.ts`, if no content type exceeds the 0.3 confidence threshold, return `{ type: 'text', confidence: 0.0 }`. | Status: not_done
+- [x] **Implement plain text fallback** — In `src/detect.ts`, if no content type exceeds the 0.3 confidence threshold, return `{ type: 'text', confidence: 0.0 }`. | Status: done
 
 - [ ] **Implement detection performance optimization** — Analyze only the first 2000 characters for performance on large documents, plus sampling of markers throughout the text. | Status: not_done
 
-- [ ] **Export detectContentType function** — In `src/detect.ts`, export `function detectContentType(text: string): DetectResult` that runs all heuristics and returns the type with the highest confidence. | Status: not_done
+- [x] **Export detectContentType function** — In `src/detect.ts`, export `function detectContentType(text: string): DetectResult` that runs all heuristics and returns the type with the highest confidence. | Status: done
 
-- [ ] **Write content type detection tests** — In `src/__tests__/detect.test.ts`, test detection for: pure markdown, pure HTML, pure JSON, pure YAML, pure code (JS, Python, Go), plain text, ambiguous inputs (markdown with inline HTML, JSON that looks like code), and verify confidence scores. Test the 0.3 threshold fallback to plain text. | Status: not_done
+- [x] **Write content type detection tests** — In `src/__tests__/detect.test.ts`, test detection for: pure markdown, pure HTML, pure JSON, pure YAML, pure code (JS, Python, Go), plain text, ambiguous inputs (markdown with inline HTML, JSON that looks like code), and verify confidence scores. Test the 0.3 threshold fallback to plain text. | Status: done
 
 ### 1.8 Main `chunk()` Function
 
-- [ ] **Implement chunk() orchestration** — In `src/chunk.ts`, implement the main `chunk()` function: resolve defaults, auto-detect content type (or use specified type), dispatch to the appropriate strategy, apply small chunk merging, construct metadata, and return `Chunk[]`. For Phase 1, only the plain text strategy is available; other content types fall back to plain text. | Status: not_done
+- [x] **Implement chunk() orchestration** — In `src/chunk.ts`, implement the main `chunk()` function: resolve defaults, auto-detect content type (or use specified type), dispatch to the appropriate strategy, apply small chunk merging, construct metadata, and return `Chunk[]`. For Phase 1, only the plain text strategy is available; other content types fall back to plain text. | Status: done
 
-- [ ] **Write chunk() function tests** — In `src/__tests__/chunk.test.ts`, test with plain text input, verify auto-detection dispatch, verify option defaults, verify metadata on output chunks, and test edge cases (empty input returns zero chunks, whitespace-only input returns zero chunks, single character input). | Status: not_done
+- [x] **Write chunk() function tests** — In `src/__tests__/chunk.test.ts`, test with plain text input, verify auto-detection dispatch, verify option defaults, verify metadata on output chunks, and test edge cases (empty input returns zero chunks, whitespace-only input returns zero chunks, single character input). | Status: done
 
 ### 1.9 Public API Exports (Phase 1)
 
-- [ ] **Set up index.ts exports** — In `src/index.ts`, export `chunk` from `./chunk`, `detectContentType` from `./detect`, and all type definitions from `./types`. | Status: not_done
+- [x] **Set up index.ts exports** — In `src/index.ts`, export `chunk` from `./chunk`, `detectContentType` from `./detect`, and all type definitions from `./types`. | Status: done
 
 - [ ] **Verify build** — Run `npm run build` (tsc) and confirm `dist/` is generated with correct `.js`, `.d.ts`, and `.js.map` files. | Status: not_done
 
@@ -292,11 +292,11 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ### 4.1 Factory Function
 
-- [ ] **Implement createChunker()** — In `src/factory.ts`, implement the factory function that accepts `ChunkOptions` and returns a `Chunker` instance. The instance pre-binds the options to all chunking methods. Per-call overrides merge with factory options, which merge with defaults (highest precedence: per-call > factory > defaults). | Status: not_done
+- [x] **Implement createChunker()** — In `src/factory.ts`, implement the factory function that accepts `ChunkOptions` and returns a `Chunker` instance. The instance pre-binds the options to all chunking methods. Per-call overrides merge with factory options, which merge with defaults (highest precedence: per-call > factory > defaults). | Status: done
 
-- [ ] **Export createChunker from index.ts** — Add `createChunker` to the public API exports. | Status: not_done
+- [x] **Export createChunker from index.ts** — Add `createChunker` to the public API exports. | Status: done
 
-- [ ] **Write factory tests** — Test option merging precedence, verify that factory-created chunkers produce identical results to direct function calls with the same options. | Status: not_done
+- [x] **Write factory tests** — Test option merging precedence, verify that factory-created chunkers produce identical results to direct function calls with the same options. | Status: done
 
 ### 4.2 CLI Implementation
 
@@ -342,7 +342,7 @@ This file tracks all implementation tasks derived from SPEC.md. Tasks are groupe
 
 ### 4.4 Edge Case Tests
 
-- [ ] **Test empty input** — Verify `chunk('')` returns an empty array. | Status: not_done
+- [x] **Test empty input** — Verify `chunk('')` returns an empty array. | Status: done
 
 - [ ] **Test whitespace-only input** — Verify `chunk('   \n\n  ')` returns an empty array. | Status: not_done
 
