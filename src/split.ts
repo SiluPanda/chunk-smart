@@ -56,7 +56,7 @@ function packSentences(sentences: string[], maxChars: number): string[] {
 
 export function splitByTokenCount(text: string, maxTokens: number, overlap: number): string[] {
   const maxChars = tokensToChars(maxTokens)
-  const overlapChars = tokensToChars(overlap)
+  const overlapChars = Math.min(tokensToChars(overlap), maxChars - 1)
 
   if (text.length <= maxChars) return [text]
 
@@ -64,6 +64,7 @@ export function splitByTokenCount(text: string, maxTokens: number, overlap: numb
   let pos = 0
 
   while (pos < text.length) {
+    const prevPos = pos
     let end = pos + maxChars
     if (end >= text.length) {
       chunks.push(text.slice(pos))
@@ -77,12 +78,10 @@ export function splitByTokenCount(text: string, maxTokens: number, overlap: numb
       // Snap to sentence boundary
       const snapEnd = pos + sentenceMatch + 1
       chunks.push(text.slice(pos, snapEnd).trimEnd())
-      pos = snapEnd - overlapChars
-      if (pos < 0) pos = 0
+      pos = Math.max(prevPos + 1, snapEnd - overlapChars)
     } else {
       chunks.push(text.slice(pos, end).trimEnd())
-      pos = end - overlapChars
-      if (pos <= 0 || pos >= text.length) break
+      pos = Math.max(prevPos + 1, end - overlapChars)
     }
   }
 
@@ -209,10 +208,23 @@ export function splitJSON(text: string, options: ChunkOptions): string[] {
   const chunks: string[] = []
 
   if (Array.isArray(parsed)) {
-    // Split array elements into groups
-    const itemsPerChunk = Math.max(1, Math.floor(maxChars / Math.max(1, text.length / parsed.length)))
-    for (let i = 0; i < parsed.length; i += itemsPerChunk) {
-      chunks.push(JSON.stringify(parsed.slice(i, i + itemsPerChunk), null, 2))
+    // Split array elements into groups, estimating size from pretty-printed format
+    let currentArr: unknown[] = []
+    let currentSize = 2 // opening [ and closing ]
+    for (const item of parsed) {
+      const itemStr = JSON.stringify(item, null, 2)
+      // Account for indentation (2 spaces per line) + comma + newline overhead
+      const itemSize = itemStr.split('\n').map(l => '  ' + l).join('\n').length + 2
+      if (currentSize + itemSize > maxChars && currentArr.length > 0) {
+        chunks.push(JSON.stringify(currentArr, null, 2))
+        currentArr = []
+        currentSize = 2
+      }
+      currentArr.push(item)
+      currentSize += itemSize
+    }
+    if (currentArr.length > 0) {
+      chunks.push(JSON.stringify(currentArr, null, 2))
     }
   } else if (parsed !== null && typeof parsed === 'object') {
     const obj = parsed as Record<string, unknown>

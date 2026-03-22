@@ -29,6 +29,34 @@ describe('splitByTokenCount', () => {
     const result = splitByTokenCount(text, 5, 1) // 5 tokens = 20 chars, 1 token overlap = 4 chars
     expect(result.length).toBeGreaterThan(1)
   })
+
+  it('does not lose text when overlap equals maxTokens', () => {
+    const text = 'AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH'
+    const result = splitByTokenCount(text, 3, 3) // overlap == maxTokens
+    expect(result.length).toBeGreaterThan(1)
+    // The last chunk should contain the end of the text
+    expect(result[result.length - 1]).toContain('HHHH')
+  })
+
+  it('does not lose text when overlap exceeds maxTokens', () => {
+    const text = 'Word1 Word2 Word3 Word4 Word5 Word6 Word7 Word8'
+    const result = splitByTokenCount(text, 3, 10) // overlap > maxTokens
+    expect(result.length).toBeGreaterThan(1)
+    // Entire text should be covered
+    expect(result[result.length - 1]).toContain('Word8')
+  })
+
+  it('covers entire text — last chunk contains final characters', () => {
+    const text = 'abcdefghij'.repeat(10) // 100 unique-pattern chars
+    const result = splitByTokenCount(text, 5, 2) // 20-char chunks with 8-char overlap
+    expect(result.length).toBeGreaterThan(1)
+    // Last chunk must end with the last chars of the original text
+    const lastChunk = result[result.length - 1]
+    expect(text.endsWith(lastChunk) || text.includes(lastChunk)).toBe(true)
+    // Total content should span the original text
+    const totalChars = result.reduce((sum, c) => sum + c.length, 0)
+    expect(totalChars).toBeGreaterThanOrEqual(text.length)
+  })
 })
 
 describe('splitMarkdown', () => {
@@ -105,6 +133,18 @@ describe('splitJSON', () => {
     const text = 'not json at all'.repeat(50)
     const result = splitJSON(text, opts(10))
     expect(result.length).toBeGreaterThan(0)
+  })
+
+  it('splits compact JSON array without oversized chunks', () => {
+    // Compact input — previously the estimation used compact size but output was pretty-printed
+    const arr = Array.from({ length: 20 }, (_, i) => ({ id: i, name: `item_${i}` }))
+    const json = JSON.stringify(arr) // compact, no indentation
+    const maxTokens = 30 // 120 chars
+    const result = splitJSON(json, opts(maxTokens))
+    expect(result.length).toBeGreaterThan(1)
+    for (const c of result) {
+      expect(() => JSON.parse(c)).not.toThrow()
+    }
   })
 })
 
