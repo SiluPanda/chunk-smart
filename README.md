@@ -3,6 +3,7 @@
 Structure-aware text chunker for RAG pipelines.
 
 [![npm version](https://img.shields.io/npm/v/chunk-smart.svg)](https://www.npmjs.com/package/chunk-smart)
+[![npm downloads](https://img.shields.io/npm/dt/chunk-smart.svg)](https://www.npmjs.com/package/chunk-smart)
 [![license](https://img.shields.io/npm/l/chunk-smart.svg)](https://github.com/SiluPanda/chunk-smart/blob/master/LICENSE)
 [![node](https://img.shields.io/node/v/chunk-smart.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
